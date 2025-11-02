@@ -1,0 +1,64 @@
+body {
+  font-family: "Poppins", sans-serif;
+  background: #fefefe;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar {
+  background: #ff8fab;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar a {
+  color: white;
+  margin-left: 1rem;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-container,
+.dashboard {
+  max-width: 500px;
+  margin: 2rem auto;
+  text-align: center;
+}
+
+input {
+  width: 100%;
+  padding: 0.7rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  background: #ff8fab;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: gray;
+  cursor: not-allowed;
+}
+
+.sweet-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.sweet-card {
+  background: #fff0f3;
+  border: 1px solid #ffd6d6;
+  padding: 1rem;
+  border-radius: 10px;
+}
