@@ -1,73 +1,53 @@
 import { useEffect, useState } from "react";
 import API from "../api";
 
-export default function Dashboard() {
+export default function Dashboard({ setToken }) {
   const [sweets, setSweets] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [newSweet, setNewSweet] = useState({ name: "", price: "", quantity: "" });
+  const [error, setError] = useState(null);
 
   const fetchSweets = async () => {
-    const res = await API.get("/sweets/");
-    setSweets(res.data);
+    try {
+      const res = await API.get("/sweets");
+      setSweets(res.data);
+    } catch (err) {
+      setError(err.response?.data?.detail || err.message);
+    }
   };
 
   useEffect(() => {
     fetchSweets();
-    const token = localStorage.getItem("token");
-    if (token) {
-      // decode token payload (very simple way)
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      setIsAdmin(payload.sub === "admin@example.com");
-    }
   }, []);
 
-  const handleAddSweet = async (e) => {
-    e.preventDefault();
-    await API.post("/sweets/", newSweet);
-    fetchSweets();
-    setNewSweet({ name: "", price: "", quantity: "" });
+  const logout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
   };
 
   return (
     <div className="dashboard">
-      <h2>Sweet Shop</h2>
+      <header className="dash-header">
+        <h1>🍬 Sweet Shop</h1>
+        <button onClick={logout}>Logout</button>
+      </header>
 
-      {isAdmin && (
-        <form onSubmit={handleAddSweet} className="admin-form">
-          <input
-            type="text"
-            placeholder="Name"
-            value={newSweet.name}
-            onChange={(e) => setNewSweet({ ...newSweet, name: e.target.value })}
-            required
-          />
-          <input
-            type="number"
-            placeholder="Price"
-            value={newSweet.price}
-            onChange={(e) => setNewSweet({ ...newSweet, price: e.target.value })}
-            required
-          />
-          <input
-            type="number"
-            placeholder="Quantity"
-            value={newSweet.quantity}
-            onChange={(e) => setNewSweet({ ...newSweet, quantity: e.target.value })}
-            required
-          />
-          <button type="submit">Add Sweet</button>
-        </form>
-      )}
+      {error && <p className="error">{String(error)}</p>}
 
-      <div className="sweet-list">
-        {sweets.map((sweet) => (
-          <div key={sweet.id} className="sweet-card">
-            <h3>{sweet.name}</h3>
-            <p>Price: ₹{sweet.price}</p>
-            <p>Quantity: {sweet.quantity}</p>
-            <button disabled={sweet.quantity === 0}>Purchase</button>
-          </div>
-        ))}
+      <div className="sweets-list">
+        {sweets.length === 0 ? (
+          <p>No sweets found.</p>
+        ) : (
+          sweets.map((s) => (
+            <div key={s.id} className="sweet-card">
+              <h3>{s.name}</h3>
+              <p>Category: {s.category}</p>
+              <p>Price: ₹{s.price}</p>
+              <p>Qty: {s.quantity}</p>
+              <button disabled={s.quantity <= 0}>
+                {s.quantity > 0 ? "Purchase" : "Out of stock"}
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

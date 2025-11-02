@@ -1,52 +1,47 @@
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import API from "../api";
-import { Link, useNavigate } from "react-router-dom";
 
 export default function Register() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const [msg, setMsg] = useState(null);
+  const [err, setErr] = useState(null);
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
+  const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const onSubmit = async (e) => {
     e.preventDefault();
+    setMsg(null);
+    setErr(null);
     try {
-      await API.post("/auth/register", { username, email, password });
-      navigate("/login");
-    } catch (err) {
-      setError("Registration failed. Try again.");
+      const res = await API.post("/auth/register", form);
+      // backend might return access_token directly, or message + user_id
+      if (res.data?.access_token) {
+        localStorage.setItem("token", res.data.access_token);
+        navigate("/dashboard");
+      } else {
+        setMsg(res.data?.message || "Registered successfully — please login.");
+        setTimeout(() => navigate("/login"), 1000);
+      }
+    } catch (error) {
+      setErr(error.response?.data?.detail || error.response?.data || error.message);
     }
   };
 
   return (
-    <div className="auth-container">
+    <div className="form-container">
       <h2>Register</h2>
-      <form onSubmit={handleRegister}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        {error && <p className="error">{error}</p>}
+      <form onSubmit={onSubmit}>
+        <input name="username" placeholder="Username" value={form.username} onChange={onChange} required />
+        <input name="email" placeholder="Email" value={form.email} onChange={onChange} required />
+        <input type="password" name="password" placeholder="Password" value={form.password} onChange={onChange} required />
         <button type="submit">Register</button>
       </form>
+
+      {msg && <p className="success">{String(msg)}</p>}
+      {err && <p className="error">{String(err)}</p>}
+
       <p>
         Already have an account? <Link to="/login">Login</Link>
       </p>
