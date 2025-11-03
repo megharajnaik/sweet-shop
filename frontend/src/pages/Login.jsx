@@ -1,66 +1,79 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import API from "../api";
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-export default function Login({ setToken }) {
-  const [creds, setCreds] = useState({ username: "", password: "" });
-  const [err, setErr] = useState(null);
+const Login = () => {
+  const [form, setForm] = useState({ username: "", password: "" });
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const onChange = (e) => setCreds({ ...creds, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setErr(null);
+    setError("");
+
     try {
-      const params = new URLSearchParams();
-      params.append("grant_type", "password");
-      params.append("username", creds.username);
-      params.append("password", creds.password);
-
-      const res = await API.post("/auth/login", params.toString(), {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
-
-      const token = res.data?.access_token;
-      if (token) {
-        localStorage.setItem("token", token);
-        setToken(token); // ✅ update state
-        navigate("/dashboard");
-      } else {
-        setErr("No token returned from server.");
-      }
-    } catch (error) {
-      setErr(error.response?.data?.detail || error.message);
+      const res = await axios.post("http://127.0.0.1:8000/auth/login", form);
+      localStorage.setItem("token", res.data.access_token);
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Invalid username or password.");
     }
   };
 
   return (
-    <div className="form-container">
-      <h2>Login</h2>
-      <form onSubmit={onSubmit}>
-        <input
-          name="username"
-          placeholder="Username"
-          value={creds.username}
-          onChange={onChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={creds.password}
-          onChange={onChange}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-pink-100">
+      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+        <h1 className="text-3xl font-bold text-pink-600 mb-6 text-center">
+          🍬 Sweet Shop Login
+        </h1>
 
-      {err && <p className="error">{String(err)}</p>}
-      <p>
-        New here? <Link to="/register">Create account</Link>
-      </p>
+        {error && (
+          <p className="text-red-500 text-center mb-4 font-medium">{error}</p>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            name="username"
+            type="text"
+            placeholder="Username"
+            value={form.username}
+            onChange={handleChange}
+            required
+            className="w-full border border-pink-200 rounded-lg p-3 focus:ring-2 focus:ring-pink-400 focus:outline-none"
+          />
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+            className="w-full border border-pink-200 rounded-lg p-3 focus:ring-2 focus:ring-pink-400 focus:outline-none"
+          />
+
+          <button
+            type="submit"
+            className="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 rounded-lg shadow-md transition"
+          >
+            Login
+          </button>
+        </form>
+
+        <p className="text-center text-gray-600 mt-4">
+          Don’t have an account?{" "}
+          <span
+            className="text-pink-600 font-semibold cursor-pointer hover:underline"
+            onClick={() => navigate("/register")}
+          >
+            Register
+          </span>
+        </p>
+      </div>
     </div>
   );
-}
+};
+
+export default Login;

@@ -1,12 +1,33 @@
+# --- Core Framework ---
 fastapi
-uvicorn[standard]
-sqlalchemy
-alembic
-pymysql
-python-dotenv
+uvicorn
+
+# --- Database & ORM ---
+SQLAlchemy
+PyMySQL
+
+# --- Data Validation & Settings ---
+pydantic
+pydantic-settings
+email-validator
+
+# --- Authentication & Security ---
 passlib[bcrypt]
-python-jose[cryptography]
+bcrypt
+python-jose
+python-multipart
+
+# --- Environment & Utils ---
+python-dotenv
+requests
+
+# --- Cross-Origin (Frontend Access) ---
+fastapi-cors
+starlette
+
+# --- Developer Tools ---
+fastapi-utils
+
+# --- Optional Testing Tools ---
 pytest
-pytest-asyncio
 httpx
-pytest-cov

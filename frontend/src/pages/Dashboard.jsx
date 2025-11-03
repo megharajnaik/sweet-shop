@@ -1,54 +1,34 @@
-import { useEffect, useState } from "react";
-import API from "../api";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import SweetManager from "../components/SweetManager";
 
-export default function Dashboard({ setToken }) {
-  const [sweets, setSweets] = useState([]);
-  const [error, setError] = useState(null);
-
-  const fetchSweets = async () => {
-    try {
-      const res = await API.get("/sweets");
-      setSweets(res.data);
-    } catch (err) {
-      setError(err.response?.data?.detail || err.message);
-    }
-  };
+function Dashboard() {
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchSweets();
-  }, []);
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    setToken(null);
-  };
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   return (
-    <div className="dashboard">
-      <header className="dash-header">
-        <h1>🍬 Sweet Shop</h1>
-        <button onClick={logout}>Logout</button>
-      </header>
-
-      {error && <p className="error">{String(error)}</p>}
-
-      <div className="sweets-list">
-        {sweets.length === 0 ? (
-          <p>No sweets found.</p>
-        ) : (
-          sweets.map((s) => (
-            <div key={s.id} className="sweet-card">
-              <h3>{s.name}</h3>
-              <p>Category: {s.category}</p>
-              <p>Price: ₹{s.price}</p>
-              <p>Qty: {s.quantity}</p>
-              <button disabled={s.quantity <= 0}>
-                {s.quantity > 0 ? "Purchase" : "Out of stock"}
-              </button>
-            </div>
-          ))
-        )}
+    <div className="p-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">🍬 Sweet Shop Dashboard</h1>
+        <button
+          onClick={() => {
+            localStorage.removeItem("token");
+            navigate("/");
+          }}
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+        >
+          Logout
+        </button>
       </div>
+      <SweetManager />
     </div>
   );
 }
+
+export default Dashboard;

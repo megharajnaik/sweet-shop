@@ -1,19 +1,20 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class SweetCreate(BaseModel):
+class SweetBase(BaseModel):
     name: str
-    category: str
+    category: Optional[str] = None
     price: float
     quantity: int
 
-class SweetResponse(BaseModel):
+
+class SweetCreate(SweetBase):
+    pass
+
+
+class SweetResponse(SweetBase):
     id: int
-    name: str
-    category: str
-    price: float
-    quantity: int
-    added_by: Optional[int]
+    owner_id: Optional[int]
 
     class Config:
         orm_mode = True
