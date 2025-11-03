@@ -94,9 +94,14 @@ sweet-shop/
 └── README.md
 
 ## Screenshots
-Login Page
+### Login Page
+<img width="1705" height="548" alt="Screenshot 2025-11-03 115958" src="https://github.com/user-attachments/assets/d46b23c3-667a-4e98-9e75-2897dcd27225" />
+### Register page
+<img width="1577" height="583" alt="Screenshot 2025-11-03 115937" src="https://github.com/user-attachments/assets/b32b76c7-99bb-4ff3-b003-a3d082a36793" />
+### Dashboard
+<img width="1608" height="738" alt="Screenshot 2025-11-03 120042" src="https://github.com/user-attachments/assets/bf70a267-4ed0-4e8e-b7d0-5015b0d18ce2" />
+<img width="1445" height="741" alt="Screenshot 2025-11-03 120054" src="https://github.com/user-attachments/assets/1f079ca2-dd91-4b8e-aa84-56ed8c040088" />
 
-Dashboard	Add Sweet
 
 ## My AI Usage
 This project was built with assistance from AI tools to accelerate development and ensure high-quality results.
